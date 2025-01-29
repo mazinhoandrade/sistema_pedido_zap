@@ -19,7 +19,7 @@ export function ThemeToggle() {
   return (
     
     <>
-      {theme === "system" && (
+      {/* {theme === "system" && (
         <div onClick={() => setTheme("light")}>
           <Laptop className="h-6 w-6" />
         </div>
@@ -32,11 +32,11 @@ export function ThemeToggle() {
         <div onClick={() => setTheme("dark")}>
           <MoonIcon className="h-6 w-6" />
         </div>  
-      )}
+      )} */}
   
 
 
-    {/* <DropdownMenu>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -55,7 +55,7 @@ export function ThemeToggle() {
          <Laptop className="mr-2 h-4 w-4" /> System
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu> */}
+    </DropdownMenu>
 
 
     </>
