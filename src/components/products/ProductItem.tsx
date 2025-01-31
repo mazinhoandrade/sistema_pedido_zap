@@ -4,21 +4,19 @@ import { Product } from "@/types/product";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useCartStore } from "@/stores/cart-store";
+import { ProductDialog } from "./ProductDialog";
+import { useContext, useState } from "react";
+
 
 type Props = {
   item: Product;
 };
 export const ProductItem = ({ item }: Props) => {
-  const { toast } = useToast()
-  const { upsertCartItem } = useCartStore(state => state)
+  const [checkoutOpen , setCheckoutOpen] = useState(false);
   
   const handleAddButton = () => {
-    // todo adicionar ao carrinho
-    upsertCartItem(item, 1)
-    toast({
-      title: "Adicionado ao carrinho",
-      description: item.name,
-    })
+  // ver detalhes
+    setCheckoutOpen(true)
   }
 
   return (
@@ -33,10 +31,15 @@ export const ProductItem = ({ item }: Props) => {
       <div className="mt-3 flex flex-col gap-2">
         <p className="text-lg">{item.name}</p>
         <p className="text-sm opacity-50">R$ {item.price.toFixed(2)}</p>
-        <Button
-            variant="outline"
-            onClick={handleAddButton}
-        >Adicionar</Button>
+
+        <Button onClick={handleAddButton}>
+            Ver detalhes
+        </Button>
+        <ProductDialog 
+           item={item}
+           open={checkoutOpen}
+           onOpenChange={setCheckoutOpen}
+        />
       </div>
  
     </div>

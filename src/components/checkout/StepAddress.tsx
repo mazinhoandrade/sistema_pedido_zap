@@ -1,9 +1,11 @@
+"use client";
+
 import { StepsCheckout } from "@/types/stepCheckout";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { set, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { object, z } from "zod";
 import { useCheckoutStore } from "@/stores/checkout-store";
 
 import { Button } from "@/components/ui/button";
@@ -18,12 +20,13 @@ import {
 import { Input } from "@/components/ui/input";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-  } from "@/components/ui/select"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Cep, getCep } from "@/services/getstate";
 
 type Props = {
   setStep: Dispatch<SetStateAction<StepsCheckout>>;
@@ -36,10 +39,17 @@ const formShema = z.object({
   city: z.string().min(2, "Preencha o cidade, 2 caracteres no minimo"),
   district: z.string().min(2, "Preencha o bairro, 2 caracteres no minimo"),
   complement: z.string().optional(),
+  //cep: z.string().min(8, "Preencha o cep, 8 caracteres no minimo"),
 });
 
 export const StepAddress = ({ setStep }: Props) => {
   const { name, address, setAddress } = useCheckoutStore((state) => state);
+
+  const [cep, setCep] = useState<Cep>();
+
+
+  const [control, setControl] = useState<boolean>(false);
+  const [inputCep, setInputCep] = useState<string>('');
 
   const form = useForm<z.infer<typeof formShema>>({
     resolver: zodResolver(formShema),
@@ -48,14 +58,53 @@ export const StepAddress = ({ setStep }: Props) => {
     },
   });
 
+
+  
+ 
+  const handleGetCep = (cep: string) => {
+    cep = cep.replace("-", "");
+    if (cep.length === 8) {
+      getCep(cep).then((data) => {
+        if (data.localidade) {
+          setCep(data);
+          setControl(false);
+          form.setValue("city", data.localidade);
+          form.setValue("state", data.estado);
+          if (data.logradouro && data.bairro) {
+            form.setValue("street", data.logradouro);
+            form.setValue("district", data.bairro);
+          } else {
+            form.setValue("street", "");
+            form.setValue("district", "");
+          }
+        } else {
+          setControl(!control);
+          form.setValue("city", "");
+          form.setValue("state", "");
+          form.setValue("street", "");
+          form.setValue("district", "");
+        }
+      });
+    }
+  };
+
+
+
   const onSubmit = (values: z.infer<typeof formShema>) => {
     setAddress(values);
     setStep("finished");
   };
 
+  useEffect(() => {
+    handleGetCep(inputCep);
+  }, [inputCep,]);
+
   return (
     <>
-      <div className="text-md flex flex-1"> <p className="font-bold mr-1">Olá {name},</p> Preecha seu endereço</div>
+      <div className="text-md flex flex-1">
+        {" "}
+        <p className="font-bold mr-1">Olá {name},</p> Preecha seu endereço
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-2 gap-4">
@@ -66,7 +115,11 @@ export const StepAddress = ({ setStep }: Props) => {
                 <FormItem>
                   <FormLabel>Rua</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Rua dos bobos" {...field} />
+                    <Input
+                      disabled={cep?.bairro ? true : false}
+                      placeholder="Ex: Rua dos bobos"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,6 +138,24 @@ export const StepAddress = ({ setStep }: Props) => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              name="number"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cep</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Ex: 00000000"
+                      onChange={(e) => setInputCep(e.target.value)}
+                    />
+                  </FormControl>
+                  {control && inputCep.length === 8 && <p className="text-red-500 text-sm">Cep nao encontrado</p>}
+                </FormItem>
+              )}
+            />
+            
 
             <FormField
               name="complement"
@@ -107,7 +178,11 @@ export const StepAddress = ({ setStep }: Props) => {
                 <FormItem>
                   <FormLabel>Bairro</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Centro" {...field} />
+                    <Input
+                      disabled={cep?.logradouro ? true : false}
+                      placeholder="Ex: Centro"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,7 +196,11 @@ export const StepAddress = ({ setStep }: Props) => {
                 <FormItem>
                   <FormLabel>Cidade</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Sao Paulo" {...field} />
+                    <Input
+                      disabled={cep?.localidade ? true : false}
+                      placeholder="Ex: Sao Paulo"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,7 +214,24 @@ export const StepAddress = ({ setStep }: Props) => {
                 <FormItem>
                   <FormLabel>Estado</FormLabel>
                   <FormControl>
-                     <Select defaultValue={field.value} onValueChange={field.onChange}>
+                    <Input disabled={cep?.estado ? true : false} placeholder="Ex: São Paulo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* <FormField
+              name="state"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <Select
+                      defaultValue={field.value as string | undefined}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione seu estado" />
                       </SelectTrigger>
@@ -145,11 +241,12 @@ export const StepAddress = ({ setStep }: Props) => {
                         <SelectItem value="SE">SE</SelectItem>
                       </SelectContent>
                     </Select>
+
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
           </div>
           <div className="flex justify-between items-center mt-4">
             <Button

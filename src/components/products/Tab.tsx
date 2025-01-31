@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllProducts } from "@/services/product";
 import { Product } from "@/types/product";
-import Image from "next/image";
 import { ProductEmpty } from "@/components/products/Empty";
 import { ProductItem } from "@/components/products/ProductItem";
 
@@ -60,13 +59,6 @@ export const ProductsTab = async () => {
           {item.products.length === 0 && <ProductEmpty />}
         </TabsContent>
       ))}
-
-      <TabsContent value="account" className="my-5">
-        Make changes to your account here.
-      </TabsContent>
-      <TabsContent value="password" className="my-5">
-        Change your password here.
-      </TabsContent>
     </Tabs>
   );
 };

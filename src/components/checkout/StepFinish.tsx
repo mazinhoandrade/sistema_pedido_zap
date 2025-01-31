@@ -7,17 +7,26 @@ import { genereteMessage } from "@/lib/genereteMessage";
 import { StepsCheckout } from "@/types/stepCheckout";
 
 type Props = {
-    setStep: React.Dispatch<React.SetStateAction<StepsCheckout>>;
+  setStep: React.Dispatch<React.SetStateAction<StepsCheckout>>;
+  onOpenChange: (open: boolean) => void;
 };
 
-export const StepFinish = ({setStep}: Props ) => {
-  const { name, address } = useCheckoutStore((state) => state);
-  const { cart } = useCartStore((state) => state);
+export const StepFinish = ({ setStep, onOpenChange }: Props) => {
+  const { name, address, resetCheckout } = useCheckoutStore((state) => state);
+  const { cart, resetCart } = useCartStore((state) => state);
 
   const message = genereteMessage();
-  const linkZap = `https://wa.me/${
-    process.env.NEXT_PUBLIC_ZAP
-  }?text=${encodeURI(message)}`;
+  let linkZap = `https://wa.me/${process.env.NEXT_PUBLIC_ZAP}?text=${encodeURI(
+    message
+  )}`;
+  const handleWhatsApp = () => {
+    return setTimeout(() => {
+      resetCart();
+      resetCheckout();
+      onOpenChange(false);
+    }, 500);
+  };
+  console.log(address);
   return (
     <div className="text-sm text-center flex flex-col gap-2">
       <p>
@@ -27,9 +36,17 @@ export const StepFinish = ({setStep}: Props ) => {
         Seu pedido chegara em{" "}
         {`${address.street}, ${address.number}, ${address.district}`}
       </p>
-      <p className="border-b pb-1">
-        Produtos: {cart.map((item) => item.product.name).join(" | ")}
-      </p>
+      <div className="border-b pb-1">
+        Produtos:
+        <ul>
+          {cart.map((item) => (
+            <li key={item.product.id}>
+              {item.product.name}{" "}
+              {`${item.messagem ? "Obs: " + item.messagem : ""}`}
+            </li>
+          ))}
+        </ul>
+      </div>
       <p>
         Valor total: R${" "}
         {cart
@@ -56,6 +73,9 @@ export const StepFinish = ({setStep}: Props ) => {
           </Link>
         </Button>
       </div>
+      <Button variant="outline" onClick={handleWhatsApp}>
+         Fazer outro pedido
+      </Button>
     </div>
   );
 };

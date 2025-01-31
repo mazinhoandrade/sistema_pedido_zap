@@ -1,6 +1,6 @@
-import { Logo } from "@/components/logo"
-import { ThemeToggle } from "./theme-toggle"
-import { CartSidebar } from "./cart/sidebar"
+import { Logo } from "@/components/Logo"
+import { ThemeToggle } from "@/components/Theme-Toggle"
+import { ButtonOpen } from "./cart/ButtonOpen"
 
 export const Header = () => {
     return (
@@ -10,7 +10,7 @@ export const Header = () => {
                 <ThemeToggle/> 
             </div>
             <div className="flex items-center gap-2">
-                <CartSidebar />
+                <ButtonOpen />
             </div>
         </header>
     )

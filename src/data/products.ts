@@ -6,6 +6,7 @@ export const products: Product[] = [
         category: 'sushi',
         name: 'Sushi 1',
         image: '/images/sushi/sushi1.png',
+        details: 'feito com amor e peixe cru',
         price: 49
     },
     {

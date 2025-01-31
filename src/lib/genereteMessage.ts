@@ -6,13 +6,13 @@ export const genereteMessage = () => {
     const { cart } = useCartStore(state => state);
     let ordeProducts = [];
     for(let item of cart) {
-        ordeProducts.push(`${item.quantity} x ${item.product.name}`);
+        ordeProducts.push(`${item.quantity} x ${item.product.name} - ${item.messagem? 'Obs: '+item.messagem : ''}`);
     }
     return `** Dados do cliente **
 Nome: ${name}
 Telefone: ${phone}
 Endereço: ${address.street}, ${address.number}, ${address.complement}, ${address.district}
------------------
+--------------------------------------
 ** Pedido: **
 ${ordeProducts.join("\n")}`;
 

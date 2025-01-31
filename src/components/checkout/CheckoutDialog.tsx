@@ -45,7 +45,7 @@ export const CheckoutDialog = ({open, onOpenChange}: Props) => {
             <StepAddress setStep={setStep} />
           )}
           {step==="finished" && (
-             <StepFinish setStep={setStep} />
+             <StepFinish onOpenChange={onOpenChange}  setStep={setStep} />
           )}
         </div>
 
