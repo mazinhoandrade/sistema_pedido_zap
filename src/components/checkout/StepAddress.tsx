@@ -1,11 +1,11 @@
 "use client";
 
-import { StepsCheckout } from "@/types/stepCheckout";
+import { Cep, StepsCheckout } from "@/types/stepCheckout";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { object, z } from "zod";
+import {  z } from "zod";
 import { useCheckoutStore } from "@/stores/checkout-store";
 
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Cep, getCep } from "@/services/getstate";
+
+import { getZipcodeData } from "@/services/getstate";
 
 type Props = {
   setStep: Dispatch<SetStateAction<StepsCheckout>>;
@@ -64,7 +65,7 @@ export const StepAddress = ({ setStep }: Props) => {
   const handleGetCep = (cep: string) => {
     cep = cep.replace("-", "");
     if (cep.length === 8) {
-      getCep(cep).then((data) => {
+      getZipcodeData(cep).then((data) => {
         if (data.localidade) {
           setCep(data);
           setControl(false);
