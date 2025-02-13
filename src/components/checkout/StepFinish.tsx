@@ -1,7 +1,7 @@
 import { useCartStore } from "@/stores/cart-store";
 import { useCheckoutStore } from "@/stores/checkout-store";
 import { Separator } from "@radix-ui/react-separator";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { genereteMessage } from "@/lib/genereteMessage";
 import { StepsCheckout } from "@/types/stepCheckout";

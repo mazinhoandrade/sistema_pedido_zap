@@ -40,7 +40,6 @@ const formShema = z.object({
   city: z.string().min(2, "Preencha o cidade, 2 caracteres no minimo"),
   district: z.string().min(2, "Preencha o bairro, 2 caracteres no minimo"),
   complement: z.string().optional(),
-  //cep: z.string().min(8, "Preencha o cep, 8 caracteres no minimo"),
 });
 
 export const StepAddress = ({ setStep }: Props) => {
@@ -103,7 +102,6 @@ export const StepAddress = ({ setStep }: Props) => {
   return (
     <>
       <div className="text-md flex flex-1">
-        {" "}
         <p className="font-bold mr-1">Olá {name},</p> Preecha seu endereço
       </div>
       <Form {...form}>
