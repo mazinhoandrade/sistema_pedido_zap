@@ -1,5 +1,5 @@
-import { Footer } from '@/components/Footer'
-import { Header } from '@/components/Header'
+import { Footer } from '../components/Footer'
+import { Header } from '../components/Header'
 import { ProductSkeleton } from '@/components/products/Skeleton'
 import { ProductsTab } from '@/components/products/Tab'
 
